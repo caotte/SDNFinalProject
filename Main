@@ -2,7 +2,7 @@
 
 #Display text file information (Hostname, device type, MGMT address)
 
-#Display options to add, modify, or delte a device. Also display options to save changes or exit.
+#Display options to add, modify, or delete a device. Also display options to save changes or exit.
 
 #Increment addressing on all devices
 

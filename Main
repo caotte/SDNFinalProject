@@ -1,2 +1,15 @@
-# Main File for the Final Project
-# Import other modules here
+#Modify text file (add, modify, or delete a device)
+
+#Display text file information (Hostname, device type, MGMT address)
+
+#Display options to add, modify, or delte a device. Also display options to save changes or exit.
+
+#Increment addressing on all devices
+
+#Add HSRP instances on all NXOS switches
+
+#Add OSPF on all NXOS interfaces
+
+#Add VLAN 120 on all NXOS Switches, configure HSRP, OSPF, and SVI
+
+#Add OSPF instance to IOS XE devices (Manually configure if needed)

@@ -1,18 +1,16 @@
 # This file handles the file that tracks devices
 # Functions to load/close the file, and adding devices
 # Format for nested dictionary:
-# Device type (NXOS or IOS-XE)
-#      Device hostname
-#           MgmgIP
-#
-
 
 Devices = {
      "NXOS":{
-          "Rtr01":{
-               "MgmtIP":"10.10.10.10"
-               }
+          "Sw01":{
+               "MgmtIP":"10.10.20.10"
+          }
      },
      "IOSXE":{
+          "Rtr01":{
+               "MgmtIP":"10.10.20.15"
+          }
      }
 }

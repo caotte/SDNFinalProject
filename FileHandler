@@ -1,16 +1,48 @@
 # This file handles the file that tracks devices
 # Functions to load/close the file, and adding devices
-# Format for nested dictionary:
 
-Devices = {
-     "NXOS":{
-          "Sw01":{
-               "MgmtIP":"10.10.20.10"
-          }
-     },
-     "IOSXE":{
-          "Rtr01":{
-               "MgmtIP":"10.10.20.15"
-          }
-     }
-}
+import json
+
+#CO print a list of devices and their information
+def printDevices(devList):
+     
+     print('Host\tAPI\tManagement Address\n' + '-'*30)
+     for thisDev in devList:
+          print('{}\t{}\t{}'.format(thisdev, thisdev['API'], thisdev['MgmtIP'])
+
+
+# Format for nested dictionary:
+#devices = {
+#     "Sw00":{
+#          "API":"NXOS"
+#          "MgmtIP":"100.10.20.1"
+#     },
+#     "Rtr00":{
+#          "API":"IOSXE"
+#          "MgmtIP":"100.10.20.2"
+#     }
+#}
+
+#CO
+try:
+     #Open the device file and load to dictionary
+     with open("NetDevices.json") as devs:
+          devices = json.load(devs)
+except:
+     devices = {}
+
+
+#CO gather device information
+
+devName = input("Device hostname: ")
+
+APIType = input("Device API: 1 - NXOS\t2 - IOSXE: ")
+
+devIP = input("Management IP: ")
+
+
+
+#CO Write updated dictionary to file
+
+
+TODO:

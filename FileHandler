@@ -1,3 +1,7 @@
+# File handler for SDN final
+# Written by Carl Otte
+#         on 2021/5/3
+
 # This file handles the file that tracks devices
 # Functions to load/close the file, and adding devices
 
@@ -5,10 +9,35 @@ import json
 
 #CO print a list of devices and their information
 def printDevices(devList):
-     
-     print('Host\tAPI\tManagement Address\n' + '-'*30)
+
+     #print header
+     print('Host\t\tAPI\tManagement Address\n' + '-'*30)
+
+     #loop through file, printing each device
      for thisDev in devList:
-          print('{}\t{}\t{}'.format(thisdev, thisdev['API'], thisdev['MgmtIP'])
+          print('{}\t{}\t{}'.format((thisDev + " " * (15 - len(thisDev))), devList[thisDev]['API'], devList[thisDev]['MgmtIP']))
+
+
+#determine whether the IP address and mask is valid.
+def checkIP(chkAddr):
+
+    addressOcts = chkAddr.split('.') #splits the address into a list
+    #if the list has 4 entries, check more conditions, else get new input
+    if len(addressOcts) == 4:
+        for octet in addressOcts:
+            #check if the octet contains anything other than numbers
+            if not octet.isnumeric():
+                return False
+            
+            #check that the octet is between 0 and 255
+            octet = int(octet)
+            if (octet > 255 or octet < 0):
+                return False
+        else:
+            return True
+
+    #return false if the function doesn't return true beforehand        
+    return False
 
 
 # Format for nested dictionary:
@@ -26,23 +55,124 @@ def printDevices(devList):
 #CO
 try:
      #Open the device file and load to dictionary
-     with open("NetDevices.json") as devs:
-          devices = json.load(devs)
+     with open("NetDevices.json") as devFile:
+          devices = json.load(devFile)
 except:
      devices = {}
 
+printDevices(devices)
 
-#CO gather device information
+#CO Main loop to gather device information
+while True:
 
-devName = input("Device hostname: ")
+     #check for adding or removing device
+     adRem = input('Main menu:\nWhat would you like to do? add/modify/remove/quit: ')
 
-APIType = input("Device API: 1 - NXOS\t2 - IOSXE: ")
+     #add a new device
+     if adRem == 'add':
+          
+          while True:
+               print('Adding Device...')
+               #CO gather device information
+               devName = input("Device hostname: ")
+               if not devName in devices.keys():
+               
+                    #add device
+                    
+                    #get API type and check for validity
+                    APIType = input("Device API: NXOS or IOSXE: ")
+                    if not (APIType == 'NXOS' or APIType == 'IOSXE'):
+                         print('Invalid API')
+                         continue                         
 
-devIP = input("Management IP: ")
+                    #get IP and check with function, if good then update dictionary
+                    devIP = input("Management IP: ")
+                    if checkIP(devIP):
+                         print('Adding device to database...')
+                         devices.update( { devName : { "API": APIType, "MgmtIP": devIP } } )
+                         break
+                         
+                    else:
+                         print('Invalid IP.')
 
+               #return to menu
+               elif devName == 'quit':
+                    print('Returning to menu.')
+                    break
+
+               #error and return to top
+               else:
+                    print('Device already exists.')
+                    continue
+
+     #modify a device
+     elif adRem == 'modify':
+
+          while True:
+
+               #get device to modify
+               devName = input("Device hostname to modify:")
+               if devName in devices.keys():
+
+                    #get API type and check for validity
+                    APIType = input("Device API: NXOS or IOSXE: ")
+                    if not (APIType == 'NXOS' or APIType == 'IOSXE'):
+                         print('Invalid API')
+                         continue                         
+
+                    #get IP and check with function, if good then update dictionary
+                    devIP = input("Management IP: ")
+                    if checkIP(devIP):
+                         print('Adding device to database...')
+                         devices.update( { devName : { "API": APIType, "MgmtIP": devIP } } )
+                         break
+                         
+                    else:
+                         print('Invalid IP.')
+                         continue
+
+               #return to menu
+               elif devName == 'quit':
+                    print('Returning to menu.')
+                    break
+
+               #error and return to top
+               else:
+                    print('Device does not exist.')
+                    continue
+
+     #delete a device
+     elif adRem == 'remove':
+
+          while True:
+
+               #get device to remove
+               devName = input("Device hostname to remove:")
+               if devName in devices.keys():
+                    #remove device
+                    print('Removing {} from database...'.format(devName))
+                    devices.pop(devName)
+                    break
+
+               #return to menu
+               elif devName == 'quit':
+                    print('Returning to menu.')
+                    break
+
+               #error and return to top
+               else:
+                    print('Device does not exist.')
+                    continue
+     
+     elif adRem == 'quit':
+          break
+          
+     else:
+          print('Invalid input.')
+          continue
 
 
 #CO Write updated dictionary to file
-
-
-TODO:
+print("Saving file and exiting...")
+with open("NetDevices.json","w") as devFile:
+     json.dump(devices, devFile)

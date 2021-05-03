@@ -1,1 +1,289 @@
 #this file contains older functions to reference
+
+###Increment addressing on all devices###
+
+def incrementIPaddress(ipadd, octet, var):
+    print("\n")
+    
+    #addrList stores the list version of the IP address in each iteration
+    addrList = ipadd.split(".")
+
+    #Takes hard-coded values (4th octet, change by 5) and saves it each iteration
+    addrList[octet - 1] = str(int(addrList[octet - 1]) + var)
+
+    newAdd = ""
+    #For each entry in the modified IP address, add a period to convert back to IP address format
+    for element in addrList:
+        newAdd = newAdd + element + "."
+
+    #Saves converted IP address to IPInput, a variable to be passed to the changeIPaddress function
+    IPInput = newAdd.rstrip(".")
+    return IPInput
+
+###Add HSRP instances on all NXOS switches###
+
+#Build SVI. Accept deviceIP , SVI name, IP+Mask for SVI.
+#Create SVI, assign IP, and enabled intf.
+
+  def createHSRP(ipaddress,vlanID,hsrpID,hsrpAddress,cookie):
+    url = "https://" + ipaddress + "/api/mo/sys.json"
+
+    payload= {
+  "topSystem": {
+    "children": [
+      {
+        "interfaceEntity": {
+          "children": [
+            {
+              "sviIf": {
+                "attributes": {
+                  "status": "replaced",
+                  "adminSt": "up",
+                  "id": "vlan" + vlanID
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "hsrpEntity": {
+          "children": [
+            {
+              "hsrpInst": {
+                "children": [
+                  {
+                    "hsrpIf": {
+                      "attributes": {
+                        "status": "replaced",
+                        "id": "vlan" + vlanID
+                      },
+                      "children": [
+                        {
+                          "hsrpGroup": {
+                            "attributes": {
+                              "status": "replaced",
+                              "af": "ipv4",
+                              "id": hsrpID,
+                              "ip": hsrpAddress,
+                              "ipObtainMode": "admin"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+    
+    headers = {
+      'Content-Type': 'application/json',
+      'Cookie': 'APIC-cookie=' + cookie
+    }
+
+    responseHSRP = requests.request("POST", url, headers=headers,verify = False, data=json.dumps(payload))
+ 
+###Add OSPF on all NXOS interfaces###
+
+  #Build OSPF. Accept deviceIP, interface, OSPF process-ID, and OSPF area.
+def createOSPF(ipaddress,vlanID,ospfID,ospfArea,cookie):
+    url = "https://" + ipaddress + "/api/mo/sys.json"
+
+    payload= {
+  "topSystem": {
+    "children": [
+      {
+        "ospfEntity": {
+          "children": [
+            {
+              "ospfInst": {
+                "attributes": {
+                  "status": "replaced",
+                  "name": ospfID
+                },
+                "children": [
+                  {
+                    "ospfDom": {
+                      "attributes": {
+                        "status": "replaced",
+                        "name": "default"
+                      },
+                      "children": [
+                        {
+                          "ospfIf": {
+                            "attributes": {
+                              "status": "replaced",
+                              "advertiseSecondaries": "yes",
+                              "area": ospfArea,
+                              "id": "vlan" + vlanID
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "interfaceEntity": {
+          "children": [
+            {
+              "sviIf": {
+                "attributes": {
+                  "status": "replaced",
+                  "adminSt": "up",
+                  "id": "vlan" + vlanID
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+    
+    headers = {
+      'Content-Type': 'application/json',
+      'Cookie': 'APIC-cookie=' + cookie
+    }
+
+    responseOSPF = requests.request("POST", url, headers=headers,verify = False, data=json.dumps(payload))
+
+###Add VLAN 120 on all NXOS Switches, configure HSRP, OSPF, and SVI###
+
+  #Build VLAN interface. Accept deviceIP address, VLAN number, and VLAN name.
+def createVLAN(ipaddress,vlanID,vlanName,cookie):
+    url = "https://" + ipaddress + "/api/mo/sys.json"
+
+    payload= {
+  "topSystem": {
+    "children": [
+      {
+        "bdEntity": {
+          "children": [
+            {
+              "l2BD": {
+                "attributes": {
+                  "status": "replaced",
+                  "fabEncap": "vlan-" + vlanID,
+                  "name": vlanName
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+    headers = {
+      'Content-Type': 'application/json',
+      'Cookie': 'APIC-cookie=' + cookie
+    }
+
+    responseVLAN = requests.request("POST", url, headers=headers,verify = False, data=json.dumps(payload))
+
+#Build SVI. Accept deviceIP , SVI name, IP+Mask for SVI. Create SVI, assign IP, and enabled intf.
+
+def createSVI(ipaddress,vlanID,sviIP,cookie):
+    url = "https://" + ipaddress + "/api/mo/sys.json"
+
+    payload= {
+  "topSystem": {
+    "children": [
+      {
+        "ipv4Entity": {
+          "children": [
+            {
+              "ipv4Inst": {
+                "children": [
+                  {
+                    "ipv4Dom": {
+                      "attributes": {
+                        "status": "replaced",
+                        "name": "default"
+                      },
+                      "children": [
+                        {
+                          "ipv4If": {
+                            "attributes": {
+                              "status": "replaced",
+                              "id": "vlan" + vlanID
+                            },
+                            "children": [
+                              {
+                                "ipv4Addr": {
+                                  "attributes": {
+                                    "status": "replaced",
+                                    "addr": sviIP + "/24"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "interfaceEntity": {
+          "children": [
+            {
+              "sviIf": {
+                "attributes": {
+                  "status": "replaced",
+                  "adminSt": "up",
+                  "id": "vlan" + vlanID
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+    
+    headers = {
+      'Content-Type': 'application/json',
+      'Cookie': 'APIC-cookie=' + cookie
+    }
+
+    responseSVI = requests.request("POST", url, headers=headers,verify = False, data=json.dumps(payload))
+
+###Add OSPF instance to IOS XE devices (Manually configure if needed)###
+
+###These are the manual inputs for the code I entered in this section,
+###We can change these to iterables, I just wanted to exemplify what variables
+###Are linked to what
+
+#vlanID designates the number of the vlan to create
+vlanID = input("Please enter the ID of the vlan you wish to create (XX/XXX): ")
+#vlanName designates the name of the vlan to create
+vlanName = input("Please enter the name of the vlan you wish to create: ")
+#hsrpID is the hsrp group ID to configure on bot switches
+hsrpID = input("Please enter the HSRP Group ID for both switches: ")
+#hsrpAddress is the standby address to configure on both switches
+hsrpAddress = input("Please enter the HSRP Address for both switches: ")
+#ospfID is the ospf process ID to configure on both switch SVI's
+ospfID = input("Please enter the OSPF ID: ")
+#ospfarea is the ospf area address
+ospfArea = input("Please enter the OSPF area: ")

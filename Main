@@ -1,10 +1,45 @@
+#Software Defined Networking
+#Final Project Main File
+#Written by Jay Morrissey, Carl Otte, and Michael Schieldt
+#       On 20201/5/3
 
-#Increment addressing on all devices
 
-#Add HSRP instances on all NXOS switches
+#The main file will iterate through all devices from a database, and
+#perform automated actions through requests to each device
 
-#Add OSPF on all NXOS interfaces
+#import all modules here:
+import sys
+import json
+import DevRequest
 
-#Add VLAN 120 on all NXOS Switches, configure HSRP, OSPF, and SVI
 
-#Add OSPF instance to IOS XE devices (Manually configure if needed)
+
+#CO import the json file to generate a dictionary of network devices
+#File name is passed as argument to the script at launch
+with open(sys.argv[0]) as devFile:
+    devices = json.load(devFile)
+
+
+
+#CO main loop, iterate through each device in the dictionary,
+#and perform automated actions based on the device type
+for device in devices:
+    if devices[device]["APIType"] == 'NXOS':
+        
+        #TODO:
+        #Increment addressing
+        #Add VLAN 120 and SVI's
+        #Add HSRP to all interfaces
+        #Add OSPF - prefer using RESTCONF
+        
+
+
+    if devices[device]["APIType"] == 'IOSXE':
+
+        #TODO:
+        #Increment addressing
+        #Add OSPF - prefer using RESTCONF
+
+
+    else:
+        raise AttributeError("Invalid API type.")

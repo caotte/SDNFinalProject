@@ -1,1 +1,242 @@
 #File to handle device requests using different APIs
+
+#NEXOS Switches
+
+def getCookie(addr):
+
+#NX REST API Authen See REST API Reference for format of payload below
+    #URL
+    url = "https://"+ addr + "/api/aaaLogin.json"
+    #Payload
+    payload= {"aaaUser" :
+              {"attributes" :
+                   {"name" : "cisco",
+                    "pwd" : "cisco"}
+               }
+          }
+
+    response = requests.post(url, json=payload, verify = False)
+    #Returning the Cookie
+    return response.json()["imdata"][0]["aaaLogin"]["attributes"]["token"]
+ 
+#Creating Vlans
+ 
+def CreateVLAN(Cookie, DeviceIP, VlanName, VlanNumber):
+  #URL
+  url = "https://"+ DeviceIP + "/api/node/mo/sys/bd.json"
+  #Header
+  headers = {
+  'Content-Type': 'application/json',
+  'cookie': 'APIC-cookie=' + Cookie
+  }
+  #Payload
+  payload = {
+    "bdEntity": {
+      "children": [
+  {
+       "l2BD": {
+        "attributes": {
+              "fabEncap": "vlan-" + VlanNumber,
+              "name": VlanName
+  }}}]}}   
+
+  response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))
+  print(response.json)
+
+
+#Creating SVI
+
+def CreateSVI(Cookie, DeviceIP, SviInterfaceName, IpAddress, SubnetMask):
+    url = "https://" + DeviceIP + "/api/node/mo/sys/intf/svi-[" + SviInterfaceName + "].json"
+    headers = {
+      'Content-Type': 'application/json',
+      'cookie': 'APIC-cookie=' + Cookie
+      }
+    payload = {
+  "sviIf": {
+    "attributes": {
+      "id": SviInterfaceName,
+      "adminSt": "up",
+      "autostate": "no",
+      "bw": "100000",
+      "carDel": "50",
+      "delay": "10",
+      "descr": "MDP SVI" + SviInterfaceName,
+      "inbMgmt": "no",
+      "loadIntvl1": "70",
+      "mac": "2.3.4",
+      "medium": "p2p",
+      "mtu": "9216",
+      "snmpTrap": "yes"
+    }
+  }
+}
+
+
+    response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))
+    print(response)
+
+    url = "https://" + DeviceIP + "/api/node/mo/sys.json"
+    headers = {
+      'Content-Type': 'application/json',
+      'cookie': 'APIC-cookie=' + Cookie
+      }
+    payload = {
+  "topSystem": {
+    "children": [
+      {
+        "ipv4Entity": {
+          "children": [
+            {
+              "ipv4Inst": {
+                "children": [
+                  {
+                    "ipv4Dom": {
+                      "attributes": {
+                        "name": "default"
+                      },
+                      "children": [
+                        {
+                          "ipv4If": {
+                            "attributes": {
+                              "id": SviInterfaceName
+                            },
+                            "children": [
+                              {
+                                "ipv4Addr": {
+                                  "attributes": {
+                                    "addr": IpAddress + SubnetMask
+                                  }}}]}}]}}]}}]}},
+      {
+        "interfaceEntity": {
+          "children": [
+            {
+              "sviIf": {
+                "attributes": {
+                  "id": SviInterfaceName
+                }}}]}}]}}
+    response2 = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))
+    print(response2)
+
+
+
+#Creating OSPF
+
+def CreateOSPF(Cookie, DeviceIP, Interface, OspfProcessID, OspfArea):
+    url = "https://" + DeviceIP + "/api/node/mo/sys.json"
+    headers = {
+      'Content-Type': 'application/json',
+      'cookie': 'APIC-cookie=' + Cookie
+      }
+    payload = {
+        "topSystem": {
+    "children": [
+      {
+        "ospfEntity": {
+          "children": [
+            {
+              "ospfInst": {
+                "attributes": {
+                  "name": "1"
+                },
+                "children": [
+                  {
+                    "ospfDom": {
+                      "attributes": {
+                        "name": "default"
+                      },
+                      "children": [
+                        {
+                          "ospfIf": {
+                            "attributes": {
+                              "advertiseSecondaries": "yes",
+                              "area": OspfArea,
+                              "id": Interface
+                            }}}]}}]}}]}},
+      {
+        "interfaceEntity": {
+          "children": [
+            {
+              "sviIf": {
+                "attributes": {
+                  "id": Interface
+                }}}]}}]}}
+
+    response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))
+    print(response)
+    
+ #Creating HSRP
+ 
+ def CreateHSRP(Cookie, DeviceIP, Interface, HsrpGroup, HsrpAddress):
+    url = "https://" + DeviceIP + "/api/node/mo/sys.json"
+    headers = {
+      'Content-Type': 'application/json',
+      'cookie': 'APIC-cookie=' + Cookie
+      }
+    payload = {
+  "topSystem": {
+    "children": [
+      {
+        "interfaceEntity": {
+          "children": [
+            {
+              "sviIf": {
+                "attributes": {
+                  "id": Interface
+                }}}]}},
+      {
+        "hsrpEntity": {
+          "children": [
+            {
+              "hsrpInst": {
+                "children": [
+                  {
+                    "hsrpIf": {
+                      "attributes": {
+                        "id": Interface
+                      },
+                      "children": [
+                        {
+                          "hsrpGroup": {
+                            "attributes": {
+                              "af": "ipv4",
+                              "id": HsrpGroup,
+                              "ip": HsrpAddress,
+                              "ipObtainMode": "admin"
+                            }}}]}}]}}]}}]}}
+
+  response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))
+  print(response)
+    
+#IOSXE:
+
+#Change IP Address
+def ChangeIP(deviceIP, DesiredInterface, DesiredIP):
+    url = "https://" + deviceIP + ":443/restconf/data/ietf-interfaces:interfaces/interface=" + DesiredInterface
+    username = 'cisco'
+    password = 'cisco'
+    payload={"ietf-interfaces:interface": {
+                        "name": DesiredInterface,
+                        "description": "Configured by RESTCONF",
+                        "type": "iana-if-type:ethernetCsmacd",
+                        "enabled": "true",
+                                         "ietf-ip:ipv4": {
+                                                                "address": [{
+                                                                    "ip": DesiredIP,
+                                                                    "netmask": "255.255.255.0"
+                                                                    
+                                                                            }   ]
+                                                            }
+                                            }
+             }
+
+    headers = {
+      'Authorization': 'Basic cm9vdDpEX1ZheSFfMTAm',
+      'Accept': 'application/yang-data+json',
+      'Content-Type': 'application/yang-data+json'
+    }
+
+    response = requests.request("PUT", url, auth=(username,password),headers=headers, verify = False, data=json.dumps(payload)
+    )
+    
+    

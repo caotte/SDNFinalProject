@@ -16,7 +16,7 @@ import DevRequest
 #CO this function will receive an IP address from the old network, and
 #increment it to match the new network.
 def incIP(Addr, octNum, incVal):
-    adOcts = Addr[0].split('.') #splits the address
+    adOcts = Addr.split('.') #splits the address
     adOcts[octNum - 1] = str(int(adOcts[octNum - 1]) + incVal) #increments octet
     return '.'.join(adOcts)
 

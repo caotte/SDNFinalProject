@@ -19,6 +19,20 @@ def getCookie(addr):
     #Returning the Cookie
     return response.json()["imdata"][0]["aaaLogin"]["attributes"]["token"]
 
+#Request IP interface brief
+
+def getInterfaces(addr, cookie):
+    url = "https://"+ addr +"/api/node/mo/sys/ipv4/inst/dom-default.json?query-target=children"
+
+    payload={}
+    headers = {
+      'Cookie': 'APIC-cookie=' + cookie
+    }
+
+    response = requests.request("GET", url, headers=headers, verify = False, data=json.dumps(payload))
+
+    
+    return response.text
 
 
  

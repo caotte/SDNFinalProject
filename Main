@@ -21,6 +21,18 @@ def incIP(Addr, octNum, incVal):
     return '.'.join(adOcts)
 
 
+#CO this function will define the HSRP virtual address for input IPs
+def virtualAddr(Addr, infoDict):
+     #split the ip address and ip information strings into octets
+     adOcts = Addr.split('.')
+     infoOcts = infoDict['virtualIP'].split('.')
+     
+     #iterate through octets, replace any octet defined by the info dictionary
+     for x in range(4):
+          if infoOcts[x].isdigit():
+               adOcts[x] = infoOcts[x]
+     
+     return '.'.join(adOcts)
 
 
 #CO general pass information for new network

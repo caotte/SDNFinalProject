@@ -227,6 +227,36 @@ def CreateOSPF(Cookie, DeviceIP, Interface, OspfProcessID, OspfArea):
     
 #IOSXE:
 
+#get the formatted interface list from the device
+def getIntList(devIP):
+
+    #define the device connection information
+    device = {"host": devIP, "port" : "830",
+           "username":"cisco","password":"cisco"}
+
+    netconf_filter = """
+    <filter>
+        <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+            <interface>
+                
+            </interface>
+        </interfaces>
+    </filter>"""
+
+    with manager.connect(host=device['host'],port=device['port'],username=device['username'],password=device['password'],hostkey_verify=False) as m:
+
+        netconf_reply = m.get_config(source = 'running', filter = netconf_filter)
+
+    #Parse returned XML to Dictionary
+    netconf_data = xmltodict.parse(netconf_reply.xml)["rpc-reply"]["data"]
+
+    #Create List of Interfaces
+    interfaces = netconf_data["interfaces"]["interface"]
+
+    #Return the list
+    return interfaces
+
+
 #Change IP Address
 def ChangeIP(deviceIP, DesiredInterface, DesiredIP):
     url = "https://" + deviceIP + ":443/restconf/data/ietf-interfaces:interfaces/interface=" + DesiredInterface

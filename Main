@@ -13,6 +13,21 @@ import json
 import DevRequest
 
 
+#CO this function will receive an IP address from the old network, and
+#increment it to match the new network.
+def incIP(Addr, octNum, incVal):
+    adOcts = Addr[0].split('.') #splits the address
+    adOcts[octNum - 1] = str(int(adOcts[octNum - 1]) + incVal) #increments octet
+    return '.'.join(adOcts)
+
+
+
+
+#CO general pass information for new network
+addressIncrement = {'octet': 2, 'amount': 15}
+newVlan = {'name': 'VLAN120', 'number': '120'}
+
+
 
 #CO import the json file to generate a dictionary of network devices
 #File name is passed as argument to the script at launch

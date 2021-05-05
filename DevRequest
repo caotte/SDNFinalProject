@@ -20,27 +20,7 @@ def getCookie(addr):
     return response.json()["imdata"][0]["aaaLogin"]["attributes"]["token"]
 
 
-#Requests IP Interface Brief
-def getIntRest(deviceIP):
-    #URL
-    url = "https://" + addr + ":443/restconf/data/ietf-interfaces:interfaces"
 
-
-    username = 'cisco'
-    password = 'cisco'
-    payload={}
-    headers = {
-      'Content-Type': 'application/yang-data+json',
-      'Accept': 'application/yang-data+json',
-      'Authorization': 'Basic ' + Cookie
-    }
-    #REST Response
-    IntRestresponse = requests.request("GET", url, auth = (username,password), verify = False, headers=headers, data=payload)
-
-    #print(response1.text)
-    IntRestDict = json.loads(IntRestresponse.text)
-    
-    return response1.text
  
 #Creating Vlans
  

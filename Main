@@ -59,15 +59,16 @@ for device in devices:
         #Request Cookie
         Cookie = getCookie(addr)
         #Increment addressing
+        #Request IP Int Brief
         IPinterfaceResponse = getInterfaces(addr, Cookie)
         #Add VLANs + 120
-        VLANResponse = CreateVLAN(Cookie, DeviceIP, VlanName, VlanNumber)
+        VLANResponse = CreateVLAN(Cookie, DeviceIP, newVlan["name"], newVlan["number"])
         #Add SVI's
         SVIResponse = CreateSVI(Cookie, DeviceIP, SviInterfaceName, IpAddress, SubnetMask)
         #Add HSRP to all interfaces
-        HSRPResponse = CreateHSRP(Cookie, DeviceIP, Interface, HsrpGroup, HsrpAddress)
+        HSRPResponse = CreateHSRP(Cookie, DeviceIP, Interface, hsrpInfo["group"], hsprInfo["virtualIP"])
         #Add OSPF - prefer using RESTCONF
-        OSPFResponse = CreateOSPF(Cookie, DeviceIP, Interface, OspfProcessID, OspfArea)
+        OSPFResponse = CreateOSPF(Cookie, DeviceIP, Interface, ospfID["PID"], ospfInfo["area"])
 
 
     if devices[device]["APIType"] == 'IOSXE':

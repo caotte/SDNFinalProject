@@ -57,6 +57,7 @@ for device in devices:
         
         #TODO:
         #Request Cookie
+        Cookie = getCookie(addr)
         #Increment addressing
         #Add VLAN 120 and SVI's
         #Add HSRP to all interfaces

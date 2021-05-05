@@ -227,7 +227,7 @@ def CreateOSPF(Cookie, DeviceIP, Interface, OspfProcessID, OspfArea):
     
 #IOSXE:
 
-#get the formatted interface list from the device
+#CO this gets the formatted interface list from the device
 def getIntList(devIP):
 
     #define the device connection information
@@ -256,34 +256,80 @@ def getIntList(devIP):
     #Return the list
     return interfaces
 
-
-#Change IP Address
-def ChangeIP(deviceIP, DesiredInterface, DesiredIP):
-    url = "https://" + deviceIP + ":443/restconf/data/ietf-interfaces:interfaces/interface=" + DesiredInterface
-    username = 'cisco'
-    password = 'cisco'
-    payload={"ietf-interfaces:interface": {
-                        "name": DesiredInterface,
-                        "description": "Configured by RESTCONF",
-                        "type": "iana-if-type:ethernetCsmacd",
-                        "enabled": "true",
-                                         "ietf-ip:ipv4": {
-                                                                "address": [{
-                                                                    "ip": DesiredIP,
-                                                                    "netmask": "255.255.255.0"
-                                                                    
-                                                                            }   ]
-                                                            }
-                                            }
-             }
-
-    headers = {
-      'Authorization': 'Basic cm9vdDpEX1ZheSFfMTAm',
-      'Accept': 'application/yang-data+json',
-      'Content-Type': 'application/yang-data+json'
-    }
-
-    response = requests.request("PUT", url, auth=(username,password),headers=headers, verify = False, data=json.dumps(payload)
-    )
+#CO this uses NETCONF to change the IP of a specific interface on a device
+#Format <x.x.x.x>, <x.x.x.x>, <y.y.y.y>, <interfacename>
+def updateDevInt(devIP, intIP, intMask, interface):
     
+    #define the device connection information
+    device = {"host": devIP, "port" : "830",
+           "username":"cisco","password":"cisco"}
+
+    #define the payload
+    xmlPayload = """<config>
+                    <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+                            <interface>
+                                <{0}>
+                                    <name>{1}</name>
+                                    
+                                    <ip>                                    
+                                        <address>
+                                            <primary>
+                                                <address>{2}</address>
+                                                <mask>{3}</mask>
+                                             </primary>
+                                        </address>                                   
+                                    </ip>				
+                                </{0}>
+                            </interface>
+                        
+                    </native>
+            </config>"""     
+
+    #split interface name and number
+    splitInt = ['','']
+    for x in interface:
+        if x.isalpha(): splitInt[0] += x
+        else: splitInt[1] += x
     
+    #use string.format to insert information into payload
+    xmlPayload = xmlPayload.format(splitInt[0], splitInt[1], intIP, intMask)
+
+    #connect to device and try update
+    with manager.connect(host=device['host'],port=device['port'],username=device['username'],password=device['password'],hostkey_verify=False) as m:
+
+        try:
+            netconf_reply = m.edit_config(target = 'running', config = xmlPayload)
+            return netconf_reply
+        except:
+            return "Update config failed!"
+
+
+
+#DO NOT USE --- restconf adds junk secondary IP addresses --- Change IP Address using RESTCONF
+#def ChangeIP(deviceIP, DesiredInterface, DesiredIP):
+#    url = "https://" + deviceIP + ":443/restconf/data/ietf-interfaces:interfaces/interface=" + DesiredInterface
+#    username = 'cisco'
+#    password = 'cisco'
+#    payload={"ietf-interfaces:interface": {
+#                        "name": DesiredInterface,
+#                        "description": "Configured by RESTCONF",
+#                        "type": "iana-if-type:ethernetCsmacd",
+#                        "enabled": "true",
+#                                         "ietf-ip:ipv4": {
+#                                                                "address": [{
+#                                                                    "ip": DesiredIP,
+#                                                                    "netmask": "255.255.255.0"
+#                                                                    
+#                                                                            }   ]
+#                                                            }
+#                                            }
+#             }
+#
+#    headers = {
+#      'Authorization': 'Basic cm9vdDpEX1ZheSFfMTAm',
+#      'Accept': 'application/yang-data+json',
+#      'Content-Type': 'application/yang-data+json'
+#    }
+#
+#    response = requests.request("PUT", url, auth=(username,password),headers=headers, verify = False, data=json.dumps(payload))
+#

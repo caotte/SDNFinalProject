@@ -44,7 +44,7 @@ def virtualAddr(Addr, infoDict):
 
 #CO general pass information for new network
 addressIncrement = {'octet': 2, 'amount': 15}
-newVlan = {'name': 'VLAN120', 'number': '120'}
+newVlan = {'name': 'vlan120', 'number': '120'}
 ospfInfo = {'PID': '10', 'area': '0'}
 hsrpInfo = {'group': '1', 'virtualIP': 'x.x.x.1'}
 

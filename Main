@@ -99,7 +99,7 @@ for device in devices:
     if devices['device']['API'] == 'IOSXE':
 
         #get interface list
-        intList = getIntList(device["MgmtIP"])
+        intList = DevRequest.getIntList(device["MgmtIP"])
         
         #loop through interfaces, incrementing IP
         for interface in intList:
@@ -107,10 +107,10 @@ for device in devices:
                 #Increment addressing
                 newIP = incIP(interface['ipv4']['address']['ip'], addressIncrement["octet"], addressIncrement["amount"])
                 #Update addressing
-                updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
+                DevRequest.updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
                 
-                #Add OSPF - prefer using RESTCONF, currently using newOSPF for NXAPI
-
+                #Add OSPF - prefer using RESTCONF, currently testing with newOSPF for NXAPI
+                #OSPFResponse = DevRequest.CreateOSPF(Cookie, devices[device]["MgmtIP"], interface['name'], ospfID["PID"], ospfInfo["area"])
 
     else:
         raise AttributeError("Invalid API type.")

@@ -37,40 +37,6 @@ def getInterfaces(addr, cookie):
 
     
     return response.text
-    
-#Returns a list of dictionaries, one for each interface, that contains only an interface name and IP address
-def getIntRest(devIP):
-    
-    #define the url for the request
-    url = "https://" + devIP + ":443/restconf/data/ietf-interfaces:interfaces"
-
-    #define credentials and header
-    username = 'cisco'
-    password = 'cisco'
-    payload={}
-    headers = {
-      'Content-Type': 'application/yang-data+json',
-      'Accept': 'application/yang-data+json',
-      'Authorization': 'Basic cm9vdDpEX1ZheSFfMTAm'
-    }
-
-    #get the response
-    response = requests.request("GET", url, auth = (username,password), verify = False, headers=headers, data=payload)
-
-    #assign the relevant portion of the response as a new dictionary
-    mainIntList = response.json()["ietf-interfaces:interfaces"]["interface"]
-
-    #create an empty interface dictionary
-    intIPList = {}
-    
-    #iterate through the dictionary, assigning only interface name and IP to a new dictionary
-    for thisInt in mainIntList:
-        if 'address' in thisInt['ietf-ip:ipv4']:
-            intIPList.update({thisInt['name']: thisInt['ietf-ip:ipv4']['address'][0]['ip']})
-
-    #return the constructed dictionary
-    return intIPList
-
 
  
 #Creating Vlans

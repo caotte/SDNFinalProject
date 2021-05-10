@@ -184,7 +184,7 @@ def CreateOSPF(Cookie, DeviceIP, Interface, OspfProcessID, OspfArea):
     
  #Creating HSRP
  
- def CreateHSRP(Cookie, DeviceIP, Interface, HsrpGroup, HsrpAddress):
+def CreateHSRP(Cookie, DeviceIP, Interface, HsrpGroup, HsrpAddress):
     url = "https://" + DeviceIP + "/api/node/mo/sys.json"
     headers = {
       'Content-Type': 'application/json',

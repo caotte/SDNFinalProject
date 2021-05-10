@@ -21,6 +21,13 @@ def incIP(Addr, octNum, incVal):
     return '.'.join(adOcts)
 
 
+#CO this function will use an existing VLAN address to generate a new SVI address per device
+def SVIAddr(interfaceBrief, SVINumber):
+    addressTemplate = interfaceBrief["result"]["body"]["TABLE_intf"]["ROW_intf"][0]['prefix']
+    adOcts = addressTemplate.split('.')
+    adOcts[2] = SVINumber
+    return '.'.join(adOcts)
+
 #CO this function will define the HSRP virtual address for input IPs
 def virtualAddr(Addr, infoDict):
      #split the ip address and ip information strings into octets
@@ -102,7 +109,7 @@ for device in devices:
                 #Update addressing
                 updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
                 
-            #Add OSPF - prefer using RESTCONF
+                #Add OSPF - prefer using RESTCONF, currently using newOSPF for NXAPI
 
 
     else:

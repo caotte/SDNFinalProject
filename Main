@@ -45,7 +45,7 @@ def virtualAddr(Addr, virtualIP):
 #CO general pass information for new network
 addressIncrement = {'octet': 2, 'amount': 15}
 newVlan = {'name': 'vlan120', 'number': '120'}
-ospfInfo = {'PID': '10', 'area': '0'}
+ospfInfo = {'PID': '10', 'area': '0.0.0.0'}
 hsrpInfo = {'group': '1', 'virtualIP': 'x.x.x.1'}
 
 
@@ -107,10 +107,10 @@ for device in devices:
                 #Increment addressing
                 newIP = incIP(interface['ipv4']['address']['ip'], addressIncrement["octet"], addressIncrement["amount"])
                 #Update addressing
-                DevRequest.updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
+                DevRequest.updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'].lower())
                 
                 #Add OSPF - prefer using RESTCONF, currently testing with newOSPF for NXAPI
-                #OSPFResponse = DevRequest.CreateOSPF(Cookie, devices[device]["MgmtIP"], interface['name'], ospfID["PID"], ospfInfo["area"])
+                #OSPFResponse = DevRequest.CreateOSPF(Cookie, devices[device]["MgmtIP"], interface['name'].lower(), ospfID["PID"], ospfInfo["area"])
 
     else:
         raise AttributeError("Invalid API type.")

@@ -61,7 +61,7 @@ for device in devices:
         #Increment addressing
         incIP(Addr, addressIncrement["octet"], addressIncrement["amount"])
         #Update device addressing
-        IPResponse = ChangeIPInterface(Cookie, DeviceIP, InterfaceName, DesiredIpAddress, DesiredSubnetMask)
+        IPResponse = ChangeIPInterface(Cookie, DesiredIpAddress, DesiredSubnetMask)
         #Request IP Int Brief
         IPinterfaceResponse = getInterfaces(addr, Cookie)
         #Add VLANs + 120
@@ -74,16 +74,20 @@ for device in devices:
         OSPFResponse = CreateOSPF(Cookie, DeviceIP, Interface, ospfID["PID"], ospfInfo["area"])
 
 
-    if devices[device]["APIType"] == 'IOSXE':
+    if device["APIType"] == 'IOSXE':
 
-        #TODO:
-        #Request Cookie
-        Cookie = getCookie
-        #Increment addressing
-        incIP(Addr, addressIncrement["octet"], addressIncrement["amount"])
-        #Update addressing
-        updateDevInt(devIP, intIP, intMask, interface)
-        #Add OSPF - prefer using RESTCONF
+        #get interface list
+        intList = getIntList(device["MgmtIP"])
+        
+        #loop through interfaces, incrementing IP
+        for interface in intList:
+            if interface['name'].startswith("G"):
+                #Increment addressing
+                newIP = incIP(interface['ipv4']['address']['ip'], addressIncrement["octet"], addressIncrement["amount"])
+                #Update addressing
+                updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
+                
+            #Add OSPF - prefer using RESTCONF
 
 
     else:

@@ -268,6 +268,34 @@ def ChangeIpInterface(Cookie, DeviceIP, InterfaceName, DesiredIpAddress, Desired
     #Requesting the change on the switch
     response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))    
 
+
+def chIP(Cookie, DeviceIP, IFName, IFIP, IFMask)
+
+    #define the url for requests
+    url = "https://" + DeviceIP + "/api/node/mo/sys/ipv4/inst/dom-default/if-[" + IFName + "].json?query-target=children"
+
+    #define the headers for requests
+    headers = {
+      'Content-Type': 'application/json',
+      'Cookie': 'APIC-cookie=' + Cookie
+    }
+
+    #define the payload for requests
+    payload={
+            "ipv4Addr": {
+                "attributes": {
+                    "addr": IFIP + IFMask,
+                    "type": "primary"
+                }
+            }
+    }
+
+    #get the response
+    return requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))
+
+
+
+
 #IOSXE:
 
 #CO this gets the formatted interface list from the device

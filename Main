@@ -59,6 +59,9 @@ for device in devices:
         #Request Cookie
         Cookie = getCookie(addr)
         #Increment addressing
+        incIP(Addr, addressIncrement["octet"], addressIncrement["amount"])
+        #Update device addressing
+        
         #Request IP Int Brief
         IPinterfaceResponse = getInterfaces(addr, Cookie)
         #Add VLANs + 120
@@ -75,7 +78,11 @@ for device in devices:
 
         #TODO:
         #Request Cookie
+        Cookie = getCookie
         #Increment addressing
+        incIP(Addr, addressIncrement["octet"], addressIncrement["amount"])
+        #Update addressing
+        updateDevInt(devIP, intIP, intMask, interface)
         #Add OSPF - prefer using RESTCONF
 
 

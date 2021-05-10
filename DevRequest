@@ -227,7 +227,7 @@ def CreateHSRP(Cookie, DeviceIP, Interface, HsrpGroup, HsrpAddress):
 
 #Change IP on NXOS Switches
 
-def ChangeIpInterface(Cookie, DeviceIP, DesiredIpAddress, DesiredSubnetMask):
+def ChangeIpInterface(Cookie, DeviceIP, InterfaceName, DesiredIpAddress, DesiredSubnetMask):
     #URL
     url = "https://"+ DeviceIP +"/api/mo/sys.json"
     #Payload
@@ -249,7 +249,7 @@ def ChangeIpInterface(Cookie, DeviceIP, DesiredIpAddress, DesiredSubnetMask):
     {
         "ipv4If": {
             "attributes": {
-                "id": "vlan101"
+                "id": InterfaceName
             },
     "children": [
     {

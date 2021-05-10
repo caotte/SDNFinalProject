@@ -269,7 +269,7 @@ def ChangeIpInterface(Cookie, DeviceIP, InterfaceName, DesiredIpAddress, Desired
     response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))    
 
 
-def chIP(Cookie, DeviceIP, IFName, IFIP, IFMask)
+def chIP(Cookie, DeviceIP, IFName, IFIP, IFMask):
 
     #define the url for requests
     url = "https://" + DeviceIP + "/api/node/mo/sys/ipv4/inst/dom-default/if-[" + IFName + "].json?query-target=children"

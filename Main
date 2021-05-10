@@ -45,7 +45,7 @@ hsrpInfo = {'group': '1', 'virtualIP': 'x.x.x.1'}
 
 #CO import the json file to generate a dictionary of network devices
 #File name is passed as argument to the script at launch
-with open(sys.argv[0]) as devFile:
+with open('NetDevices.json') as devFile:
     devices = json.load(devFile)
 
 
@@ -53,7 +53,7 @@ with open(sys.argv[0]) as devFile:
 #CO main loop, iterate through each device in the dictionary,
 #and perform automated actions based on the device type
 for device in devices:
-    if devices[device]["APIType"] == 'NXOS':
+    if devices[device]['API'] == 'NXOS':
         
         #TODO:
         #Request Cookie
@@ -74,7 +74,7 @@ for device in devices:
         OSPFResponse = CreateOSPF(Cookie, DeviceIP, Interface, ospfID["PID"], ospfInfo["area"])
 
 
-    if device["APIType"] == 'IOSXE':
+    if devices['device']['API'] == 'IOSXE':
 
         #get interface list
         intList = getIntList(device["MgmtIP"])

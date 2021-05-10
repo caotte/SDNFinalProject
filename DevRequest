@@ -227,9 +227,9 @@ def CreateOSPF(Cookie, DeviceIP, Interface, OspfProcessID, OspfArea):
 
 #Change IP on NXOS Switches
 
-def ChangeIpInterface(Cookie, DesiredIpAddress, DesiredSubnetMask):
+def ChangeIpInterface(Cookie, DeviceIP, DesiredIpAddress, DesiredSubnetMask):
     #URL
-    url = "https://10.10.20.177/api/mo/sys.json"
+    url = "https://"+ DeviceIP +"/api/mo/sys.json"
     #Payload
     payload= {
     "topSystem": {

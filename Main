@@ -60,7 +60,7 @@ with open('NetDevices.json') as devFile:
 #CO main loop, iterate through each device in the dictionary,
 #and perform automated actions based on the device type
 for device in devices:
-    if devices[device]['API'] == 'NXOS':
+    if devices[device]["API"] == 'NXOS':
         
         #TODO:
         #Request Cookie
@@ -68,6 +68,7 @@ for device in devices:
         #Request IP Int Brief
         IPinterfaceResponse = DevRequest.requestIPbrief(devices[device]["MgmtIP"])
         #print(IPinterfaceResponse)
+      
         #Increment addressing
         for key in IPinterfaceResponse["result"]["body"]["TABLE_intf"]["ROW_intf"]: 
             incIPResponse = incIP(key["prefix"], addressIncrement["octet"], addressIncrement["amount"])
@@ -83,17 +84,34 @@ for device in devices:
                 IPResponse = DevRequest.chIP(Cookie, devices[device]["MgmtIP"], key["intf-name"], incIPResponse ,"/30")
                 #print(key["intf-name"])
                 print(IPResponse)
+
+        #Verify that new IP's were updated on devices
+        #IPinterfaceResponse = DevRequest.requestIPbrief(devices[device]["MgmtIP"])
+        #print(IPinterfaceResponse)
+
+        #Create VLAN 120
+        DevRequest.CreateVLAN(Cookie, devices[device]["MgmtIP"], newVlan["name"], newVlan["number"])
+        
+        #Add SVI on VLAN 120
+        SVIResponse = DevRequest.CreateSVI(Cookie, devices[device]["MgmtIP"], newVlan["name"], SVIAddr(IPinterfaceResponse, newVlan["number"]), "/24")
+        
+
         #Request IP Int Brief
         IPinterfaceResponse = DevRequest.requestIPbrief(devices[device]["MgmtIP"])
+        print("IP Int Response:")
         print(IPinterfaceResponse)
-        #Add VLANs + 120
-        VLANResponse = CreateVLAN(Cookie, DeviceIP, newVlan["name"], newVlan["number"])
-        #Add SVI's
-        SVIResponse = CreateSVI(Cookie, DeviceIP, SviInterfaceName, IpAddress, SubnetMask)
-        #Add HSRP to all interfaces
-        HSRPResponse = CreateHSRP(Cookie, DeviceIP, Interface, hsrpInfo["group"], hsprInfo["virtualIP"])
-        #Add OSPF - prefer using RESTCONF
-        OSPFResponse = CreateOSPF(Cookie, DeviceIP, Interface, ospfID["PID"], ospfInfo["area"])
+        
+        for key in IPinterfaceResponse["result"]["body"]["TABLE_intf"]["ROW_intf"]:
+        #Add HSRP to all vlan interfaces
+            if key["intf-name"].startswith("V"):
+                HSRPResponse = DevRequest.CreateHSRP(Cookie, devices[device]["MgmtIP"], key["intf-name"].lower(), hsrpInfo["group"], virtualAddr(key["prefix"], hsrpInfo["virtualIP"]))
+                print("HSRP Response: ")
+                print(HSRPResponse)
+            #Add OSPF - prefer using RESTCONF
+            OSPFResponse = DevRequest.CreateOSPF(Cookie, devices[device]["MgmtIP"], key["intf-name"].lower(), ospfInfo["PID"], ospfInfo["area"])
+            print("OSPF Response: ")
+            print(OSPFResponse)
+
 
 
     if devices['device']['API'] == 'IOSXE':

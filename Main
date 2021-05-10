@@ -61,7 +61,7 @@ for device in devices:
         #Increment addressing
         incIP(Addr, addressIncrement["octet"], addressIncrement["amount"])
         #Update device addressing
-        
+        IPResponse = ChangeIPInterface(Cookie, DesiredIpAddress, DesiredSubnetMask)
         #Request IP Int Brief
         IPinterfaceResponse = getInterfaces(addr, Cookie)
         #Add VLANs + 120

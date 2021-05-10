@@ -57,13 +57,28 @@ for device in devices:
         
         #TODO:
         #Request Cookie
-        Cookie = getCookie(addr)
-        #Increment addressing
-        incIP(Addr, addressIncrement["octet"], addressIncrement["amount"])
-        #Update device addressing
-        IPResponse = ChangeIPInterface(Cookie, DesiredIpAddress, DesiredSubnetMask)
+        Cookie = DevRequest.getCookie(devices[device]["MgmtIP"])
         #Request IP Int Brief
-        IPinterfaceResponse = getInterfaces(addr, Cookie)
+        IPinterfaceResponse = DevRequest.requestIPbrief(devices[device]["MgmtIP"])
+        #print(IPinterfaceResponse)
+        #Increment addressing
+        for key in IPinterfaceResponse["result"]["body"]["TABLE_intf"]["ROW_intf"]: 
+            incIPResponse = incIP(key["prefix"], addressIncrement["octet"], addressIncrement["amount"])
+            print(incIPResponse)
+            #Update device addressing
+            #Changes subnet mask to /24 if interface is a Vlan
+            if key["intf-name"].startswith("V"):
+                IPResponse = DevRequest.chIP(Cookie, devices[device]["MgmtIP"], key["intf-name"], incIPResponse ,"/24")
+                #print(key["intf-name"])
+                print(IPResponse)
+            #Changes subnet mask to /30 if interface is Ethernet
+            elif key["intf-name"].startswith("E"):
+                IPResponse = DevRequest.chIP(Cookie, devices[device]["MgmtIP"], key["intf-name"], incIPResponse ,"/30")
+                #print(key["intf-name"])
+                print(IPResponse)
+        #Request IP Int Brief
+        IPinterfaceResponse = DevRequest.requestIPbrief(devices[device]["MgmtIP"])
+        print(IPinterfaceResponse)
         #Add VLANs + 120
         VLANResponse = CreateVLAN(Cookie, DeviceIP, newVlan["name"], newVlan["number"])
         #Add SVI's

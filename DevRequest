@@ -224,7 +224,47 @@ def CreateOSPF(Cookie, DeviceIP, Interface, OspfProcessID, OspfArea):
 
   response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))
   print(response)
-    
+
+#Change IP on NXOS Switches
+
+def ChangeIpInterface(Cookie, DesiredIpAddress, DesiredSubnetMask):
+    #URL
+    url = "https://10.10.20.177/api/mo/sys.json"
+    #Payload
+    payload= {
+    "topSystem": {
+    "children": [
+    {
+    "ipv4Entity": {
+        "children": [
+    {
+        "ipv4Inst": {
+            "children": [
+    {
+    "ipv4Dom": {
+        "attributes": {
+            "name": "default"
+    },
+    "children": [
+    {
+        "ipv4If": {
+            "attributes": {
+                "id": "vlan101"
+            },
+    "children": [
+    {
+    "ipv4Addr": {
+        "attributes": {
+            "addr": DesiredIpAddress + DesiredSubnetMask
+    }}}]}}]}}]}}]}}]}}
+    #Headers
+    headers = {
+      'Content-Type': 'application/json',
+      'cookie': 'APIC-cookie=' + Cookie
+    }
+    #Requesting the change on the switch
+    response = requests.request("POST", url, verify = False, headers=headers, data=json.dumps(payload))    
+
 #IOSXE:
 
 #CO this gets the formatted interface list from the device

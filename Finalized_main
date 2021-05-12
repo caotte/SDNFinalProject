@@ -122,8 +122,8 @@ for device in devices:
                 #Update addressing#
                 updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
                 
-            #Add OSPF - prefer using RESTCONF
-            #OSPFResponse = DevRequest.CreateOSPFCLI(devices[device]["MgmtIP"], ospfInfo["range"], ospfInfo["PID"], ospfInfo["area"])
+        #Add OSPF - prefer using RESTCONF
+        #OSPFResponse = DevRequest.CreateOSPFCLI(devices[device]["MgmtIP"], ospfInfo["range"], ospfInfo["PID"], ospfInfo["area"])
 
     else:
         raise AttributeError("Invalid API type.")

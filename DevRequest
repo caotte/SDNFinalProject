@@ -327,6 +327,7 @@ def getIntList(devIP):
     #Return the list
     return interfaces
 
+
 #CO this uses NETCONF to change the IP of a specific interface on a device
 #Format <x.x.x.x>, <x.x.x.x>, <y.y.y.y>, <interfacename>
 def updateDevInt(devIP, intIP, intMask, interface):
@@ -375,3 +376,41 @@ def updateDevInt(devIP, intIP, intMask, interface):
             return "Update config failed!"
 
 
+#CO this uses netconf to configure the OSPF using CLI
+#NOTE: this was Michael did not finish this, so I had to put together a function on May 12
+def CreateOSPF(deviceIP, IPRange, OSPFProcessID, OSPFArea):
+
+    #define the device connection information
+    device = {
+        "URL":"https://" + deviceIP + "/ins"
+        "username":"cisco",
+        "password":"cisco"
+    }
+    
+    #assign the header information
+    myheaders={'content-type':'application/json-rpc'}
+
+    #define the CLI payload
+    payload=[
+        {
+            "jsonrpc": "2.0",
+            "method": "cli",
+            "params": {
+                "cmd": "router ospf " + OOSPFProcessID,
+                "version": 1
+            },
+            "id": 1
+        },
+        {
+            "jsonrpc": "2.0",
+            "method": "cli",
+            "params": {
+                "cmd": "network" + IPRange + " area 0",
+                "version": 1
+            },
+            "id": 2
+        },
+    ]
+
+
+    response = requests.post(url=device['URL'],data=json.dumps(payload),verify=False,headers=myheaders,auth=(device['username'],device['password'])).json()

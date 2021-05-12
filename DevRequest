@@ -382,7 +382,7 @@ def CreateOSPFCLI(deviceIP, IPRange, OSPFProcessID, OSPFArea):
 
     #define the device connection information
     device = {
-        "URL":"https://" + deviceIP + "/ins"
+        "URL":"https://" + deviceIP + "/ins",
         "username":"cisco",
         "password":"cisco"
     }
@@ -405,7 +405,7 @@ def CreateOSPFCLI(deviceIP, IPRange, OSPFProcessID, OSPFArea):
             "jsonrpc": "2.0",
             "method": "cli",
             "params": {
-                "cmd": "network" + IPRange + " area 0",
+                "cmd": "network" + IPRange + " area " + OSPFArea,
                 "version": 1
             },
             "id": 2

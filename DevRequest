@@ -4,6 +4,7 @@
 import sys
 import json
 import requests
+import xmltodict
 from ncclient import manager
 
 #NEXOS Switches

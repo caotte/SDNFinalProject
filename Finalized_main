@@ -117,7 +117,7 @@ for device in devices:
                 #Increment addressing#
                 newIP = incIP(interface['ipv4']['address']['ip'], addressIncrement["octet"], addressIncrement["amount"])
                 #Update addressing#
-                updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
+                updateDevInt(devices[device]["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'])
                 
         #Add OSPF - prefer using RESTCONF
         OSPFResponse = DevRequest.CreateOSPFCLI(devices[device]["MgmtIP"], ospfInfo["range"], ospfInfo["PID"], ospfInfo["area"])

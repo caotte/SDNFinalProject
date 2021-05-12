@@ -396,7 +396,7 @@ def CreateOSPFCLI(deviceIP, IPRange, OSPFProcessID, OSPFArea):
             "jsonrpc": "2.0",
             "method": "cli",
             "params": {
-                "cmd": "router ospf " + OOSPFProcessID,
+                "cmd": "router ospf " + OSPFProcessID,
                 "version": 1
             },
             "id": 1

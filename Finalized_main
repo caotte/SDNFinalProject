@@ -126,5 +126,5 @@ for device in devices:
         OSPFResponse = DevRequest.CreateOSPFCLI(devices[device]["MgmtIP"], ospfInfo["range"], ospfInfo["PID"], ospfInfo["area"])
 
     else:
-        raise AttributeError("Invalid API type.")
+        print("device API not found.")
 

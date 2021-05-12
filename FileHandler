@@ -75,7 +75,12 @@ while True:
                print('Adding Device...')
                #CO gather device information
                devName = input("Device hostname: ")
-               if not devName in devices.keys():
+               
+               if devName == 'quit':
+                    print('Returning to menu.')
+                    break
+                    
+               elif not devName in devices.keys():
                
                     #add device
                     
@@ -96,10 +101,7 @@ while True:
                          print('Invalid IP.')
 
                #return to menu
-               elif devName == 'quit':
-                    print('Returning to menu.')
-                    break
-
+               
                #error and return to top
                else:
                     print('Device already exists.')
@@ -112,7 +114,13 @@ while True:
 
                #get device to modify
                devName = input("Device hostname to modify:")
-               if devName in devices.keys():
+               
+               #return to menu
+               if devName == 'quit':
+                    print('Returning to menu.')
+                    break
+                    
+               elif devName in devices.keys():
 
                     #get API type and check for validity
                     APIType = input("Device API: NXOS or IOSXE: ")
@@ -131,11 +139,6 @@ while True:
                          print('Invalid IP.')
                          continue
 
-               #return to menu
-               elif devName == 'quit':
-                    print('Returning to menu.')
-                    break
-
                #error and return to top
                else:
                     print('Device does not exist.')
@@ -148,15 +151,16 @@ while True:
 
                #get device to remove
                devName = input("Device hostname to remove:")
-               if devName in devices.keys():
+               
+               #return to menu
+               if devName == 'quit':
+                    print('Returning to menu.')
+                    break
+                    
+               elif devName in devices.keys():
                     #remove device
                     print('Removing {} from database...'.format(devName))
                     devices.pop(devName)
-                    break
-
-               #return to menu
-               elif devName == 'quit':
-                    print('Returning to menu.')
                     break
 
                #error and return to top

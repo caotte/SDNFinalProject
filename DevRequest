@@ -378,7 +378,7 @@ def updateDevInt(devIP, intIP, intMask, interface):
 
 #CO this uses netconf to configure the OSPF using CLI
 #NOTE: this was Michael did not finish this, so I had to put together a function on May 12
-def CreateOSPF(deviceIP, IPRange, OSPFProcessID, OSPFArea):
+def CreateOSPFCLI(deviceIP, IPRange, OSPFProcessID, OSPFArea):
 
     #define the device connection information
     device = {

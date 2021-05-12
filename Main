@@ -127,8 +127,8 @@ for device in devices:
                 #Update addressing
                 DevRequest.updateDevInt(device["MgmtIP"], newIP, interface['ipv4']['address']['netmask'], interface['name'].lower())
                 
-        #Add OSPF - prefer using RESTCONF, currently testing with newOSPF for NXAPI
-        #OSPFResponse = DevRequest.CreateOSPF(devices[device]["MgmtIP"], ospfInfo["range"], ospfInfo["PID"], ospfInfo["area"])
+        #Add OSPF - prefer using RESTCONF, currently testing with CLI until michael adds the final request
+        #OSPFResponse = DevRequest.CreateOSPFCLI(devices[device]["MgmtIP"], ospfInfo["range"], ospfInfo["PID"], ospfInfo["area"])
 
     else:
         raise AttributeError("Invalid API type.")

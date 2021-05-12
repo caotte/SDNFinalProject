@@ -106,7 +106,7 @@ for device in devices:
             print("OSPF Response: " + str(OSPFResponse))
 
     
-    if devices[device]["API"] == 'IOSXE':
+    elif devices[device]["API"] == 'IOSXE':
 
         #get interface list#
         intList = getIntList(device["MgmtIP"])

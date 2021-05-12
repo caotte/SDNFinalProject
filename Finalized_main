@@ -113,7 +113,7 @@ for device in devices:
         
         #loop through interfaces, incrementing IP#
         for interface in intList:
-            if interface['name'].startswith("G"):
+            if interface['name'].startswith("G") and interface['name'] != "GigabitEthernet1":
                 #Increment addressing#
                 newIP = incIP(interface['ipv4']['address']['ip'], addressIncrement["octet"], addressIncrement["amount"])
                 #Update addressing#

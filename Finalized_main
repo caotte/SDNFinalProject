@@ -94,19 +94,16 @@ for device in devices:
 
         #Request IP Int Brief#
         IPinterfaceResponse = DevRequest.requestIPbrief(devices[device]["MgmtIP"])
-        print("IP Int Response:")
-        print(IPinterfaceResponse)
+        #print(IPinterfaceResponse)
         
         for key in IPinterfaceResponse["result"]["body"]["TABLE_intf"]["ROW_intf"]:
         #Add HSRP to all vlan interfaces#
             if key["intf-name"].startswith("V"):
                 HSRPResponse = DevRequest.CreateHSRP(Cookie, devices[device]["MgmtIP"], key["intf-name"].lower(), hsrpInfo["group"], virtualAddr(key["prefix"], hsrpInfo["virtualIP"]))
-                print("HSRP Response: ")
-                print(HSRPResponse)
+                print("HSRP Response: " + str(HSRPResponse))
             #Add OSPF - prefer using RESTCONF#
             OSPFResponse = DevRequest.CreateOSPF(Cookie, devices[device]["MgmtIP"], key["intf-name"].lower(), ospfInfo["PID"], ospfInfo["area"])
-            print("OSPF Response: ")
-            print(OSPFResponse)
+            print("OSPF Response: " + str(OSPFResponse))
 
     
     if devices[device]["API"] == 'IOSXE':

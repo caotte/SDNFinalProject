@@ -109,7 +109,7 @@ for device in devices:
     elif devices[device]["API"] == 'IOSXE':
 
         #get interface list#
-        intList = getIntList(device["MgmtIP"])
+        intList = getIntList(devices[device]["MgmtIP"])
         
         #loop through interfaces, incrementing IP#
         for interface in intList:
